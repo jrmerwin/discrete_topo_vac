@@ -1,0 +1,78 @@
+#: table_doi: 10.17182/hepdata.167852.v1/t15
+#: name: Fig. 5: Particle level CHI distribution (4.8 < M(JJ) < 5.4 TeV)
+#: description: Normalized CHI = exp(|Y1-Y2|) distributions (1/SIG)*D(SIG)/DCHI in 4.8 < M(JJ) < 5.4 TeV with |Y1+Y2|/2< 1.1 for 138 fb$^{-1}$ of integrated luminosity at $\sqrt{s} = 13$ TeV. The data distributions corrected for detector effects are compared to NNLO predictions with central scale choices $\mu_{F}$ = $\mu_{R}$ = $m_{jj}$ and $\mu_{F}$ = $\mu_{R}$ = $<p_{T}>$. Prediction with the alternative CT14 PDF set, and a comparison with the NLO prediction used in the previous publication are also given. Theoretical uncertainties with the central scale $\mu_{F}$ = $\mu_{R}$ = $m_{jj}$ and using NNPDF3.1 are provided. We also provide prediction without EW corrections applied.
+#: data_file: fig._5:_particle_level_chi_distribution_(4.8_<_m(jj)_<_5.4_tev).yaml
+#: keyword reactions: P P --> JET JET X
+#: keyword cmenergies: 13000
+#: keyword observables: DSIG/DCHI
+#: LUMINOSITY [fb$^{-1}$],,,138.0
+CHI = exp(|Y1-Y2|),CHI = exp(|Y1-Y2|) LOW,CHI = exp(|Y1-Y2|) HIGH,Measured,sys +,sys -,total +,total -
+1.5,1,2,0.08429,0.00278,-0.00278,0.00628,-0.00628
+2.5,2,3,0.0649,0.00158,-0.00158,0.00527,-0.00527
+3.5,3,4,0.06218,0.00121,-0.00121,0.00521,-0.00521
+4.5,4,5,0.06761,0.00112,-0.00112,0.00543,-0.00543
+5.5,5,6,0.07323,0.001,-0.001,0.00563,-0.00563
+6.5,6,7,0.06941,0.0008,-0.0008,0.0056,-0.0056
+7.5,7,8,0.06257,0.00057,-0.00057,0.00545,-0.00545
+8.5,8,9,0.06394,0.00041,-0.00041,0.00553,-0.00553
+9.5,9,10,0.06525,0.00046,-0.00046,0.00565,-0.00565
+11.0,10,12,0.0674,0.0008,-0.0008,0.00416,-0.00416
+13.0,12,14,0.0605,0.00121,-0.00121,0.00417,-0.00417
+15.0,14,16,0.06541,0.00188,-0.00188,0.00449,-0.00449
+
+CHI = exp(|Y1-Y2|),CHI = exp(|Y1-Y2|) LOW,CHI = exp(|Y1-Y2|) HIGH,QCD NNLO + EW NLO ($\mu=m_{jj}$),theory +,theory -
+1.5,1,2,0.07981,0.00065,-0.0005
+2.5,2,3,0.0646,0.00048,-0.00036
+3.5,3,4,0.06277,0.00037,-0.00026
+4.5,4,5,0.06253,0.0003,-0.00022
+5.5,5,6,0.0633,0.00025,-0.00022
+6.5,6,7,0.06392,0.00023,-0.00022
+7.5,7,8,0.0646,0.00023,-0.00023
+8.5,8,9,0.06525,0.0001,-8e-05
+9.5,9,10,0.06592,0.00025,-0.00026
+11.0,10,12,0.06686,0.00027,-0.0003
+13.0,12,14,0.06795,0.00027,-0.00038
+15.0,14,16,0.06885,0.00017,-0.00047
+
+CHI = exp(|Y1-Y2|),CHI = exp(|Y1-Y2|) LOW,CHI = exp(|Y1-Y2|) HIGH,QCD NNLO + EW NLO ($\mu=<p_{T}>$)
+1.5,1,2,0.08348
+2.5,2,3,0.06678
+3.5,3,4,0.0647
+4.5,4,5,0.06429
+5.5,5,6,0.0644
+6.5,6,7,0.06465
+7.5,7,8,0.06496
+8.5,8,9,0.06523
+9.5,9,10,0.06551
+11.0,10,12,0.06584
+13.0,12,14,0.06608
+15.0,14,16,0.06608
+
+CHI = exp(|Y1-Y2|),CHI = exp(|Y1-Y2|) LOW,CHI = exp(|Y1-Y2|) HIGH,QCD NLO + EW NLO ($\mu=<p_{T}>$)
+1.5,1,2,0.07932
+2.5,2,3,0.06469
+3.5,3,4,0.0627
+4.5,4,5,0.06305
+5.5,5,6,0.06323
+6.5,6,7,0.06376
+7.5,7,8,0.06438
+8.5,8,9,0.06501
+9.5,9,10,0.0657
+11.0,10,12,0.06672
+13.0,12,14,0.06805
+15.0,14,16,0.06932
+
+CHI = exp(|Y1-Y2|),CHI = exp(|Y1-Y2|) LOW,CHI = exp(|Y1-Y2|) HIGH,QCD NNLO ($\mu=m_{jj}$)
+1.5,1,2,0.072965
+2.5,2,3,0.061962
+3.5,3,4,0.061827
+4.5,4,5,0.062475
+5.5,5,6,0.063714
+6.5,6,7,0.064614
+7.5,7,8,0.065456
+8.5,8,9,0.066239
+9.5,9,10,0.066964
+11.0,10,12,0.067942
+13.0,12,14,0.069042
+15.0,14,16,0.069908
+
