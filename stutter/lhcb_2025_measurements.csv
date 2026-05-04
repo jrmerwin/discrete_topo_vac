@@ -1,0 +1,7 @@
+dataset,observable,q2_low,q2_high,value,err_stat,err_syst,err_total,sm_value,sm_err,notes
+lhcb_2025_reference,AFB,2.5,4.0,-0.118,0.025,0.005000000000000001,0.025,,,S_i; config i; source=fit_summary_si_s1c_bin_2_with_corrections.tex; raw=A_ FB [ 10-1 ]
+lhcb_2025_reference,AFB,4.0,6.0,0.034,0.019000000000000003,0.003,0.020000000000000004,,,S_i; config i; source=fit_summary_si_s1c_bin_3_with_corrections.tex; raw=A_ FB [ 10-1 ]
+lhcb_2025_reference,dB_dq2,1.1,6.0,0.002157,5e-05,2.5e-05,5.6000000000000006e-05,,,relative B_P [10^-4]; preferred config-(i) rate source=fit_summary_si_s1c_bin_8_with_corrections.tex; basis=S_i; config=i; integrated relative P-wave branching fraction proxy; compare only to same-unit SM baseline
+lhcb_2025_reference,P5p,1.1,2.5,0.44100000000000006,0.074,0.007000000000000001,0.07500000000000001,,,fit configuration ii; source=fit_summary_pi_s1c_bin_1_with_corrections.tex; raw=P_5prime [ 10-1 ]
+lhcb_2025_reference,P5p,4.0,6.0,-0.47900000000000004,0.073,0.007000000000000001,0.073,,,fit configuration ii; source=fit_summary_pi_s1c_bin_3_with_corrections.tex; raw=P_5prime [ 10-1 ]
+lhcb_2025_reference,P5p,6.0,8.0,-0.5860000000000001,0.05500000000000001,0.006,0.05600000000000001,,,fit configuration ii; source=fit_summary_pi_s1c_bin_4_with_corrections.tex; raw=P_5prime [ 10-1 ]

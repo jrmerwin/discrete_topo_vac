@@ -1,0 +1,2 @@
+dataset,parameter,value,err_total,notes
+lhcb_2025_reference,delta_Re_C9,-0.94,0.19,LHCb angular-only Flavio fit; reported -0.94 +0.21/-0.17; uncertainty symmetrized for DEU/RMR fit-sign check
