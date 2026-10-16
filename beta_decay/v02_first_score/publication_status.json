@@ -1,0 +1,13 @@
+{
+  "github_release": "https://github.com/jrmerwin/discrete_topo_vac/releases/tag/card-v0.2",
+  "concept_doi": "10.5281/zenodo.20019885",
+  "may_version_doi": "10.5281/zenodo.20019886",
+  "new_version_doi": "10.5281/zenodo.23424585",
+  "zenodo_created_utc": "2026-10-16T19:17:08.582420+00:00",
+  "first_score_output_written_utc": "2026-10-16T19:17:14.649958+00:00",
+  "archive_card_bytes_verified": true,
+  "archive_contains_no_v02_score_outputs": true,
+  "archive_description_checksum_verified": true,
+  "archive_description_existing_data_notice_verified": true,
+  "archive_precedes_first_scoring_output": true
+}

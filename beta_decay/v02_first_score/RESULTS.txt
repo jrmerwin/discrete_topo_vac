@@ -1,0 +1,50 @@
+v0.2 FIRST SCORING RUN AGAINST EXISTING DATA
+
+Classification: AMBER. All seven matched primary angular rows have the predicted sign; directional Stouffer Z = 6.426790665.
+Warning-only results: none. Danger results: one (listed below). A danger also satisfies its warning threshold.
+
+DANGER: older-data pooled C9 channel/helicity independence
+dataset=bordone_isidori_tinari_2024; pooled chi2 = 12.590471307 for 3 dof; p = 0.00561137892719.
+This pool includes K as well as K*0/K*par/K*perp. It is not a K*-helicity-only test. Its marginal-error, independent-group approximation ignores unavailable correlations; K and K* also have different q2 coverage.
+Every within-group q2-flatness p-value exceeds 0.05. This is older, pre-2025 LHCb input, with forward component = Run 3.
+
+S7 / S8 / S9 ABSORPTIVE TESTS: no warnings and no dangers
+Registered reference = flavio 2.7.0 SM, with measurement and SM errors combined. These are not zero-only or measurement-error-only pulls.
+q2 low  q2 high       S7 z       S8 z       S9 z
+  0.06     0.98   0.392738  -1.007893  -1.343261
+   1.1      2.5  -1.673276  -0.716315  -0.960319
+   1.1        6  -1.704848   0.245020  -1.781916
+   2.5        4  -1.417371   0.396529  -0.173220
+     4        6  -1.271548  -0.178329  -1.439251
+     6        8  -1.061464  -1.834099   1.818534
+Absorptive diagnostic chi2 = 27.065333861 for 18 rows; nominal p = 0.077778205.
+The 1.1-6.0 row overlaps narrower bins. Its inclusion means the summed chi2 is not an independent joint significance.
+The recorded flavio uncertainties are material, especially for S7, and use the existing N=30 procedure. They have not been recomputed or tightened after seeing the score.
+
+C9 FLATNESS GROUPS
+group          p-value         slope z
+K           0.150948651     -1.099062
+K*0         0.515086512      1.952221
+K*par       0.929159136      0.305974
+K*perp      0.355141807      0.636418
+
+LFU TWO-SIDED FITS: no warnings and no dangers
+delta_Re_C9_mu_minus_e: value=0.34, err=0.41, target=0, z=0.829268293
+R_K_1p1_6: value=0.949, err=0.0469707356, target=1, z=-1.08578244
+R_Kstar_1p1_6: value=1.027, err=0.0748481797, target=1, z=0.360730216
+
+SIGNED C9 FITS: both central values inside the unchanged [-1.4,-0.4] window
+lhcb_2025_reference: delta C9=-0.94 +/-0.19; target pull=-0.210526; in_soft_range=True
+bordone_isidori_tinari_2026_long_distance_constrained: delta C9=-0.52 +/-0.25; target pull=1.52; in_soft_range=True
+
+NOT YET EXECUTABLE: dispersive S7-S9 baseline
+baseline_ld and baseline_ld_err are empty. Fig. 5.4 of arXiv:2607.09458 has figure-only postdictions; author-supplied or tabulated values are needed. No digitized numbers enter the scored files, and no numerical verdict comparing the two baselines is claimed.
+No CP-null measurements are present. The original fine-bin electron counterparts and electron rate also have no matching measurements; the electron inputs are scored once each in 1.1-6.0.
+
+PROVENANCE AND TIMING
+The original May card and cms_dijet were not modified. The registration commit and card-v0.2 tag preceded this first scoring run.
+GitHub release: https://github.com/jrmerwin/discrete_topo_vac/releases/tag/card-v0.2
+Zenodo version: https://doi.org/10.5281/zenodo.23424585
+Existing concept: https://doi.org/10.5281/zenodo.20019885; May version: https://doi.org/10.5281/zenodo.20019886.
+publication_status.json verifies the published archive contains the exact card bytes, includes the existing-data notice and recorded checksum, contains no scoring outputs, and predates this scoring output.
+All scores above read the saved first-run outputs; the scorer was not rerun to create this report.
