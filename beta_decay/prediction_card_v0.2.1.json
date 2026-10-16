@@ -1,0 +1,266 @@
+{
+  "name": "DEU/RMR angular-stutter prediction card for B0 -> K*0 mu+ mu-",
+  "version": "0.2.1",
+  "locked_date_utc": "2026-10-16",
+  "scope": "Future independent measurements of CP-averaged angular observables and branching fraction in B0 -> K*0(->K+pi-) mu+ mu-.",
+  "interpretation": "A real, CP-even, vector-like residual pattern resembling a negative shift in Re(C9), not a CP-violating, scalar/tensor, or pure S-wave effect.",
+  "primary_observable_predictions": [
+    {
+      "id": "P5p_1p1_2p5_positive",
+      "observable": "P5p",
+      "q2_low": 1.1,
+      "q2_high": 2.5,
+      "expected_sign": 1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "DEU/RMR predicts P'_5 data minus SM remains positive in this bin."
+    },
+    {
+      "id": "P5p_4_6_positive",
+      "observable": "P5p",
+      "q2_low": 4.0,
+      "q2_high": 6.0,
+      "expected_sign": 1,
+      "weight": 1.25,
+      "match": "exact",
+      "rationale": "DEU/RMR predicts P'_5 data minus SM remains positive in this bin."
+    },
+    {
+      "id": "P5p_6_8_positive",
+      "observable": "P5p",
+      "q2_low": 6.0,
+      "q2_high": 8.0,
+      "expected_sign": 1,
+      "weight": 0.75,
+      "match": "exact",
+      "rationale": "Secondary check: same P'_5 sign should persist even near the bin closest to charmonium."
+    },
+    {
+      "id": "AFB_2p5_4_negative",
+      "observable": "AFB",
+      "q2_low": 2.5,
+      "q2_high": 4.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "DEU/RMR predicts forward-backward asymmetry data minus SM remains negative."
+    },
+    {
+      "id": "AFB_4_6_negative",
+      "observable": "AFB",
+      "q2_low": 4.0,
+      "q2_high": 6.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "DEU/RMR predicts forward-backward asymmetry data minus SM remains negative."
+    },
+    {
+      "id": "rate_1p1_6_negative",
+      "observable": "dB_dq2",
+      "q2_low": 1.1,
+      "q2_high": 6.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "within_or_exact",
+      "rationale": "DEU/RMR predicts differential branching fraction remains below SM over 1.1 < q^2 < 6.0. If a future dataset reports narrower bins, each contained rate bin is scored with the same sign."
+    },
+    {
+      "id": "P5p_1p1_2p5_positive_e",
+      "observable": "P5p",
+      "q2_low": 1.1,
+      "q2_high": 2.5,
+      "expected_sign": 1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "P5p_4_6_positive_e",
+      "observable": "P5p",
+      "q2_low": 4.0,
+      "q2_high": 6.0,
+      "expected_sign": 1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "P5p_6_8_positive_e",
+      "observable": "P5p",
+      "q2_low": 6.0,
+      "q2_high": 8.0,
+      "expected_sign": 1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "AFB_2p5_4_negative_e",
+      "observable": "AFB",
+      "q2_low": 2.5,
+      "q2_high": 4.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "AFB_4_6_negative_e",
+      "observable": "AFB",
+      "q2_low": 4.0,
+      "q2_high": 6.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "rate_1p1_6_negative_e",
+      "observable": "dB_dq2",
+      "q2_low": 1.1,
+      "q2_high": 6.0,
+      "expected_sign": -1,
+      "weight": 1.0,
+      "match": "within_or_exact",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II.",
+      "lepton": "e",
+      "registered_date_utc": "2026-10-16"
+    },
+    {
+      "id": "P5p_1p1_6_integrated_e",
+      "observable": "P5p",
+      "q2_low": 1.1,
+      "q2_high": 6.0,
+      "expected_sign": 1,
+      "lepton": "e",
+      "weight": 1.0,
+      "match": "exact",
+      "registered_date_utc": "2026-10-16",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II."
+    },
+    {
+      "id": "AFB_1p1_6_integrated_e",
+      "observable": "AFB",
+      "q2_low": 1.1,
+      "q2_high": 6.0,
+      "expected_sign": -1,
+      "lepton": "e",
+      "weight": 1.0,
+      "match": "exact",
+      "registered_date_utc": "2026-10-16",
+      "rationale": "Lepton-universal mechanism: electron-mode residuals carry the same sign as the muon mode; registered against existing data; forward component = Run 3 and Belle II."
+    }
+  ],
+  "null_predictions": [
+    {
+      "id": "cp_asymmetries_zero",
+      "observable_regex": "(^A(?!FB)(?:[0-9_]|[A-Za-z]*CP|tilde).*|^CP|.*CP.*|.*asym.*)",
+      "null_value": 0.0,
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "rationale": "DEU/RMR version being tested predicts no coherent CP-asymmetry signal."
+    },
+    {
+      "id": "absorptive_parts_zero",
+      "observable_regex": "^S[789]$",
+      "null_mode": "sm",
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "registered_date_utc": "2026-10-16",
+      "rationale": "A real C9 shift produces no T-odd S7/S8/S9 beyond the SM; nonzero absorptive parts favour hadronic rescattering. Implied by the May card's 'real, vector-like' interpretation; operationalised 2026-10-16; registered against existing data; forward component = Run 3."
+    },
+    {
+      "id": "absorptive_parts_vs_dispersive",
+      "observable_regex": "^S[789]$",
+      "null_mode": "ld_baseline",
+      "status": "PENDING_AUTHOR_NUMBERS",
+      "registered_date_utc": "2026-10-16",
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "rationale": "Compare S7-S9 to the dispersive postdictions in Fig. 5.4 of arXiv:2607.09458. The baseline will be entered only from author-supplied or tabulated values, never figure digitization. Not yet executable; registered against existing data; forward component = Run 3. Added as explicit pending bookkeeping after the v0.2 first scoring run."
+    }
+  ],
+  "fit_predictions": [
+    {
+      "id": "delta_Re_C9_negative",
+      "parameter": "delta_Re_C9",
+      "expected_sign": -1,
+      "target": -0.9,
+      "soft_range_low": -1.4,
+      "soft_range_high": -0.4,
+      "rationale": "In standard EFT language, the pattern should continue to look like a real negative Re(C9) shift."
+    },
+    {
+      "id": "delta_C9_mu_minus_e_zero",
+      "parameter": "delta_Re_C9_mu_minus_e",
+      "target": 0.0,
+      "null_mode": "two_sided",
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "registered_date_utc": "2026-10-16",
+      "rationale": "Lepton-universal mechanism: the LFU-violating combination C9,mu-e is zero; registered against existing data; forward component = Run 3 global fits."
+    },
+    {
+      "id": "R_K_central_one",
+      "parameter": "R_K_1p1_6",
+      "target": 1.0,
+      "null_mode": "two_sided",
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "registered_date_utc": "2026-10-16",
+      "rationale": "Lepton-universal mechanism: central-bin R_K is one; registered against existing data; forward component = Run 3."
+    },
+    {
+      "id": "R_Kstar_central_one",
+      "parameter": "R_Kstar_1p1_6",
+      "target": 1.0,
+      "null_mode": "two_sided",
+      "warning_abs_z": 2.0,
+      "danger_abs_z": 3.0,
+      "registered_date_utc": "2026-10-16",
+      "rationale": "Lepton-universal mechanism: central-bin R_Kstar is one; registered against existing data; forward component = Run 3."
+    }
+  ],
+  "decision_rules": {
+    "green": "directional_stouffer_z >= 2.0, sign_hit_rate >= 0.75, no CP null danger, and delta_Re_C9 is negative if fit results are supplied; no absorptive, LFU-fit, or flatness danger",
+    "amber": "directional_stouffer_z >= 1.0 or sign_hit_rate >= 0.60, with no CP null danger; any danger in absorptive_parts_zero, flat_danger_count > 0, or a two-sided LFU fit is amber: these challenge the mechanism, not the original sign predictions; original red conditions retain priority",
+    "red": "directional_stouffer_z < 0, sign_hit_rate < 0.50, a coherent CP asymmetry appears, or the best EFT fit no longer prefers negative Re(C9)"
+  },
+  "supersedes": "prediction_card_v0.2.json (v0.2, 2026-10-16; immutable card-v0.2 / Zenodo 23424585)",
+  "changelog": "Post-first-score bookkeeping amendment: explicitly declares the dispersive comparison PENDING_AUTHOR_NUMBERS. All executable v0.2 predictions, numerical inputs, and thresholds are unchanged. The archived v0.2 card and its first scoring outputs remain immutable.",
+  "flatness_predictions": [
+    {
+      "id": "deltaC9_flat_in_q2",
+      "parameter": "delta_Re_C9",
+      "group_by": "helicity",
+      "test": "chi2_to_weighted_mean",
+      "warning_p": 0.05,
+      "danger_p": 0.01,
+      "registered_date_utc": "2026-10-16",
+      "rationale": "A universal shift is constant in q2 and across helicities; q2- or helicity-dependence favours uncalculated long-distance effects; registered against existing data; forward component = Run 3 bin-by-bin C9. Forward quantity: Run 3 bin-by-bin C9."
+    }
+  ],
+  "analysis_notes": [
+    "Electron fine-bin predictions are retained for future data; two additional 1.1-6.0 predictions score Table 3 of arXiv:2502.10291 exactly once per observable. No artificial fine-bin measurements are inferred.",
+    "C9 flatness uses the explicit older numerical Tables 3.3-3.4 of arXiv:2401.18007v2 cited alongside the 2026 update in review Fig. 17. arXiv:2607.09458 displays individual-bin results in Figs. 5.1-5.2 rather than a numerical table; these newer points are not transcribed.",
+    "Null chi2 uses diagonal errors and includes the overlapping 1.1-6.0 S7-S9 rows as requested; this is a diagnostic, not an independence-calibrated joint significance. Per-bin warnings must all be reported.",
+    "Flatness uses symmetrized marginal errors and treats groups as independent; published correlations and asymmetric likelihood shapes are not available in this CSV schema.",
+    "The S7-S9 SM null is an operational discriminator, not a claim that a real short-distance C9 change cannot modify interference with existing SM strong phases.",
+    "The global-fit LFU row is a Gaussian approximation to a 68% HPDI, with sign reversed using Eq. 33 of arXiv:2607.03531; it is not an author-supplied Gaussian best fit.",
+    "The 2026 long-distance-constrained delta_Re_C9 row is the sign-reversed published extraction in Eq. 5.3 of arXiv:2607.09458, -0.52 +/- 0.25, including its stated theory errors. It is an alternative treatment of the same data, not an independent fit replicate.",
+    "baseline_ld and baseline_ld_err are reserved for numerical dispersive postdictions. Section 5.3 and Fig. 5.4 of arXiv:2607.09458 supply figure-only bands; absent author numbers these fields are empty and the LD comparison is unscored. The flavio SM baseline remains unchanged."
+  ],
+  "registration_phase": "post-v0.2-first-score bookkeeping; no new numerical prediction; not part of the May or v0.2 preregistration",
+  "publication_status": "Follow-up committed on main; no second tag or Zenodo release requested. Immutable v0.2 archive remains DOI 10.5281/zenodo.23424585."
+}

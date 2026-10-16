@@ -5,6 +5,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import contextlib
+import io
 import numpy as np
 import pandas as pd
 import score_deu_b2kstar as score
@@ -29,6 +31,23 @@ class Regression(unittest.TestCase):
 
 
 class SyntheticDiscriminators(unittest.TestCase):
+    def test_pending_null_skipped_once_even_with_no_data(self):
+        pending = dict(id='absorptive_parts_vs_dispersive', null_mode='ld_baseline', status='PENDING_AUTHOR_NUMBERS')
+        stream = io.StringIO()
+        with contextlib.redirect_stdout(stream):
+            result = score.score_cp_nulls(pd.DataFrame(), dict(null_predictions=[pending]))
+        self.assertTrue(result.empty)
+        self.assertEqual(stream.getvalue(), 'Skipped null absorptive_parts_vs_dispersive: PENDING_AUTHOR_NUMBERS\n')
+
+    def test_ld_null_uses_separate_baseline(self):
+        df = pd.DataFrame([dict(dataset='synthetic', observable='S7', q2_low=1, q2_high=2,
+                                value=5, err_total=3, sm_value=1, sm_err=4,
+                                baseline_ld=4, baseline_ld_err=4)])
+        card = dict(null_predictions=[dict(id='ld', observable_regex='^S7$', null_mode='ld_baseline')])
+        self.assertAlmostEqual(score.score_cp_nulls(df, card).iloc[0].z_to_null, .2)
+        df['baseline_ld_err'] = np.nan
+        self.assertTrue(score.score_cp_nulls(df, card).empty)
+
     def test_ld_is_separate_and_missing_values_are_unscored(self):
         df = pd.DataFrame([dict(dataset='synthetic', observable='S7', q2_low=1, q2_high=2,
                                 value=5, err_total=3, sm_value=1, sm_err=4,

@@ -247,6 +247,10 @@ def summarize_primary(scored: pd.DataFrame) -> Dict[str, Any]:
 def score_cp_nulls(df: pd.DataFrame, card: Dict[str, Any]) -> pd.DataFrame:
     rows: List[Dict[str, Any]] = []
     for null_pred in card.get("null_predictions", []):
+        status = str(null_pred.get("status", ""))
+        if status.startswith("PENDING"):
+            print(f"Skipped null {null_pred.get('id', 'null_prediction')}: {status}")
+            continue
         pattern = re.compile(str(null_pred["observable_regex"]), re.IGNORECASE)
         null_value = float(null_pred.get("null_value", 0.0))
         warning_abs_z = float(null_pred.get("warning_abs_z", 2.0))
@@ -257,10 +261,16 @@ def score_cp_nulls(df: pd.DataFrame, card: Dict[str, Any]) -> pd.DataFrame:
         sub = df[df["observable"].astype(str).apply(lambda x: bool(pattern.search(x)))]
         for _, row in sub.iterrows():
             mode = null_pred.get("null_mode", "zero")
-            if mode not in {"zero", "sm"}:
+            if mode not in {"zero", "sm", "ld_baseline"}:
                 raise ValueError(f"Unknown null_mode: {mode}")
             null_value = _to_float_or_nan(row.get("sm_value")) if mode == "sm" else float(null_pred.get("null_value", 0.0))
             err = combined_error(row) if mode == "sm" else measurement_error(row)
+            if mode == "ld_baseline":
+                null_value = _to_float_or_nan(row.get("baseline_ld"))
+                ld_error = _to_float_or_nan(row.get("baseline_ld_err"))
+                if not math.isfinite(ld_error) or ld_error < 0:
+                    continue
+                err = math.hypot(err, ld_error)
             value = _to_float_or_nan(row["value"])
             if not (math.isfinite(null_value) and math.isfinite(value) and math.isfinite(err) and err > 0):
                 continue
@@ -570,13 +580,19 @@ def main(argv: Optional[List[str]] = None) -> int:
         summary.update(summarize_cp_nulls(cp_nulls))
     else:
         absorptive = cp_nulls["null_id"].eq("absorptive_parts_zero") if not cp_nulls.empty else pd.Series(dtype=bool)
-        summary.update(summarize_cp_nulls(cp_nulls.loc[~absorptive] if not cp_nulls.empty else cp_nulls))
+        ld_ids = [p["id"] for p in card.get("null_predictions", []) if p.get("null_mode") == "ld_baseline"]
+        ld_mask = cp_nulls["null_id"].isin(ld_ids) if not cp_nulls.empty else pd.Series(dtype=bool)
+        summary.update(summarize_cp_nulls(cp_nulls.loc[~absorptive & ~ld_mask] if not cp_nulls.empty else cp_nulls))
         abs_summary = summarize_cp_nulls(cp_nulls.loc[absorptive] if not cp_nulls.empty else cp_nulls)
         summary.update({k.replace("n_cp_null_matches", "abs_n_matches").replace("max_abs_cp_z", "abs_max_abs_z").replace("cp_", "abs_"): v for k, v in abs_summary.items()})
         c9_path = args.c9_bins or Path(args.prediction_card).with_name("lhcb_2025_c9_bins.csv")
         flat = score_flatness(c9_path, card)
         summary.update(summarize_flatness(flat))
-        ld = score_ld_comparison(measurements)
+        pending = [p["id"] for p in card.get("null_predictions", []) if str(p.get("status", "")).startswith("PENDING")]
+        pending_ld = any(p["id"] in pending for p in card.get("null_predictions", []) if p.get("null_mode") == "ld_baseline")
+        ld = score_ld_comparison(measurements.iloc[:0] if pending_ld else measurements)
+        if pending:
+            summary["pending_null_ids"] = pending
         summary["ld_n_matches"] = len(ld)
         summary["ld_status"] = "numeric postdictions available" if len(ld) else "unscored: figure-only postdictions; author numbers required"
     summary.update(summarize_fits(fit_scores))
