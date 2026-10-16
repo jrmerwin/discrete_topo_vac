@@ -1,0 +1,20 @@
+{
+  "n_primary_matches": 5,
+  "sign_hits": 5,
+  "sign_hit_rate": 1.0,
+  "directional_stouffer_z": 5.883356999671099,
+  "one_sided_binomial_p_hit_rate": 0.03125,
+  "mean_directional_z": 2.656040603739833,
+  "n_cp_null_matches": 0,
+  "max_abs_cp_z": NaN,
+  "cp_chi2": NaN,
+  "cp_chi2_dof": 0,
+  "cp_chi2_p_value": NaN,
+  "cp_danger_count": 0,
+  "n_fit_matches": 0,
+  "fit_sign_hits": 0,
+  "fit_soft_range_hits": 0,
+  "classification": "green",
+  "prediction_card": "DEU/RMR angular-stutter prediction card for B0 -> K*0 mu+ mu-",
+  "prediction_card_version": "0.1"
+}

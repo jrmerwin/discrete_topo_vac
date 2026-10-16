@@ -1,0 +1,15 @@
+Prediction card v0.2, registered 2026-10-16.
+
+Adds S7-S9 absorptive nulls, lepton universality, and q2/helicity C9 flatness. v0.1 primary predictions and C9 fit prediction unchanged; v0.2 adds discriminators between a universal real shift and hadronic/LFU-violating alternatives.
+
+S7-S9, electron angular observables, the muon-minus-electron global fit, central-bin LFU ratios, and older C9-bin extractions are registered against existing data; forward component = Run 3 (and Belle II for electrons).
+
+Card SHA-256 (beta_decay/prediction_card_v0.2.json): 893ae637ef1bb9b44a2a335eb95ee50ff8e5ee2f7f7e583b0a54c48ec81d61c6
+
+This tagged registration contains no v0.2 scoring outputs. The first scoring run will be stored in a later commit. The unchanged v0.1 regression reproduces five sign hits out of five and Z = 5.883356999671099, with byte-identical CSV/JSON outputs, both with and without its original C9 fit.
+
+Flatness inputs: dataset=bordone_isidori_tinari_2024, arXiv:2401.18007v2 Tables 3.3-3.4, earlier LHCb data predating the 2025 full angular analysis. No digitized 2026 points enter the scored CSV. The 2026 long-distance-constrained extraction is a separate fit row: delta C9 = -0.52 +/-0.25 (arXiv:2607.09458 Eq. 5.3, sign converted). Its S7-S9 postdiction bands are figure-only; baseline_ld and baseline_ld_err remain empty and the second-baseline comparison is explicitly unscored pending numerical inputs.
+
+All per-row warnings and dangers must be reported, including S7/S8. Absorptive/flatness/LFU-fit dangers yield amber, subject to the unchanged primary/CP red conditions. Null chi2 includes overlapping integrated bins and uses diagonal errors; flatness uses symmetrized marginal errors, without source covariance. These are diagnostic approximations, not full-fit significances.
+
+Archive this release as a NEW VERSION in the existing Zenodo chain: concept DOI 10.5281/zenodo.20019885; May version DOI 10.5281/zenodo.20019886. The supplied 20019886 DOI is the May version, as verified against Zenodo API metadata. Preserve that immutable record. The active GitHub-Zenodo webhook is configured for this repository; verify the resulting version DOI after publication.

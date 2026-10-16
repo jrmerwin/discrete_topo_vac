@@ -105,6 +105,10 @@ def load_measurements(path: str | Path) -> pd.DataFrame:
             df[col] = ""
         df[col] = df[col].fillna("").astype(str)
 
+    df["lepton"] = df.get("lepton", pd.Series("mu", index=df.index)).fillna("").astype(str).str.strip().replace("", "mu")
+    if not df["lepton"].isin(["mu", "e"]).all():
+        raise ValueError("lepton must be mu, e, or empty")
+
     return df
 
 
@@ -144,6 +148,10 @@ def combined_error(row: pd.Series) -> float:
 
 
 def bins_match(row: pd.Series, pred: Dict[str, Any], tol: float = 1e-6) -> bool:
+    lepton = row.get("lepton", "")
+    lepton = "mu" if pd.isna(lepton) else (str(lepton).strip() or "mu")
+    if "lepton" in pred and lepton != pred["lepton"]:
+        return False
     rlo, rhi = float(row["q2_low"]), float(row["q2_high"])
     plo, phi = float(pred["q2_low"]), float(pred["q2_high"])
     mode = str(pred.get("match", "exact")).lower()
@@ -248,9 +256,13 @@ def score_cp_nulls(df: pd.DataFrame, card: Dict[str, Any]) -> pd.DataFrame:
 
         sub = df[df["observable"].astype(str).apply(lambda x: bool(pattern.search(x)))]
         for _, row in sub.iterrows():
-            err = measurement_error(row)
+            mode = null_pred.get("null_mode", "zero")
+            if mode not in {"zero", "sm"}:
+                raise ValueError(f"Unknown null_mode: {mode}")
+            null_value = _to_float_or_nan(row.get("sm_value")) if mode == "sm" else float(null_pred.get("null_value", 0.0))
+            err = combined_error(row) if mode == "sm" else measurement_error(row)
             value = _to_float_or_nan(row["value"])
-            if not (math.isfinite(value) and math.isfinite(err) and err > 0):
+            if not (math.isfinite(null_value) and math.isfinite(value) and math.isfinite(err) and err > 0):
                 continue
             z = (value - null_value) / err
             rows.append(
@@ -324,6 +336,8 @@ def score_fit_results(path: Optional[str | Path], card: Dict[str, Any]) -> pd.Da
             sign_hit = expected_sign in {-1, 1} and math.isfinite(value) and expected_sign * value > 0
             in_soft_range = math.isfinite(value) and math.isfinite(soft_low) and math.isfinite(soft_high) and soft_low <= value <= soft_high
             target_z = (value - target) / err if math.isfinite(target) and math.isfinite(err) and err > 0 else float("nan")
+            if fit_pred.get("null_mode") == "two_sided" and not (math.isfinite(value) and math.isfinite(target_z)):
+                continue
             rows.append(
                 {
                     "fit_id": str(fit_pred.get("id", parameter)),
@@ -341,10 +355,20 @@ def score_fit_results(path: Optional[str | Path], card: Dict[str, Any]) -> pd.Da
                     "rationale": str(fit_pred.get("rationale", "")),
                 }
             )
+            if fit_pred.get("null_mode") == "two_sided":
+                rows[-1].update(null_mode="two_sided", warning=abs(target_z) >= float(fit_pred.get("warning_abs_z", 2.0)),
+                                danger=abs(target_z) >= float(fit_pred.get("danger_abs_z", 3.0)))
     return pd.DataFrame(rows)
 
 
 def summarize_fits(fit_scored: pd.DataFrame) -> Dict[str, Any]:
+    if not fit_scored.empty and "null_mode" in fit_scored:
+        two_sided = fit_scored["null_mode"].eq("two_sided")
+        signed = summarize_fits(fit_scored.loc[~two_sided].drop(columns=["null_mode"]))
+        signed.update(n_two_sided_fit_matches=int(two_sided.sum()),
+                      fit_null_warning_count=int(fit_scored.loc[two_sided, "warning"].sum()),
+                      fit_null_danger_count=int(fit_scored.loc[two_sided, "danger"].sum()))
+        return signed
     if fit_scored.empty:
         return {"n_fit_matches": 0, "fit_sign_hits": 0, "fit_soft_range_hits": 0}
     return {
@@ -352,6 +376,108 @@ def summarize_fits(fit_scored: pd.DataFrame) -> Dict[str, Any]:
         "fit_sign_hits": int(fit_scored["sign_hit"].sum()),
         "fit_soft_range_hits": int(fit_scored["in_soft_range"].sum()),
     }
+
+
+def score_flatness(path: Optional[str | Path], card: Dict[str, Any]) -> pd.DataFrame:
+    """Diagonal-error tests; group means are treated as independent.
+
+    Slope errors use the supplied variances, without rescaling by residual chi2.
+    A singleton contributes a mean to pooling but has no within-group p-value.
+    """
+    if path is None or not card.get("flatness_predictions"):
+        return pd.DataFrame()
+    if scipy_chi2 is None:
+        raise RuntimeError("scipy is required for flatness p-values")
+    df = pd.read_csv(path)
+    required = {"dataset", "parameter", "q2_low", "q2_high", "helicity", "value", "err_total", "notes"}
+    if required - set(df):
+        raise ValueError(f"C9 CSV missing columns: {sorted(required - set(df))}")
+    if not df["helicity"].isin(["K", "K*0", "K*par", "K*perp", "all"]).all():
+        raise ValueError("Invalid C9 helicity")
+    for col in ("q2_low", "q2_high", "value", "err_total"):
+        df[col] = df[col].apply(_to_float_or_nan)
+    valid = np.isfinite(df[["q2_low", "q2_high", "value", "err_total"]]).all(axis=1) & (df.err_total > 0) & (df.q2_high > df.q2_low)
+    if not valid.all():
+        raise ValueError("C9 rows require finite values, positive errors, and ordered bin edges")
+    rows = []
+    for pred in card.get("flatness_predictions", []):
+        if pred.get("test") != "chi2_to_weighted_mean":
+            raise ValueError(f"Unknown flatness test: {pred.get('test')}")
+        means, mean_errors = [], []
+        sub = df[df.parameter.eq(pred["parameter"])]
+        def result(group, kind, n, mean, error, statistic, dof, slope=float("nan"), slope_err=float("nan")):
+            p = float(scipy_chi2.sf(statistic, dof)) if dof > 0 else float("nan")
+            return dict(prediction_id=pred["id"], group=group, kind=kind, n=n,
+                        weighted_mean=mean, mean_error=error, chi2=statistic, dof=dof, p_value=p,
+                        slope=slope, slope_error=slope_err,
+                        slope_z=slope / slope_err if slope_err > 0 else float("nan"),
+                        warning=p < float(pred.get("warning_p", .05)),
+                        danger=p < float(pred.get("danger_p", .01)), rationale=pred.get("rationale", ""))
+        for group, data in sub.groupby(pred.get("group_by", "helicity"), sort=True):
+            y, err = data.value.to_numpy(float), data.err_total.to_numpy(float)
+            x = (data.q2_low.to_numpy(float) + data.q2_high.to_numpy(float)) / 2
+            w = 1 / err**2
+            mean = float(np.sum(w * y) / np.sum(w))
+            mean_err = float(1 / np.sqrt(np.sum(w)))
+            means.append(mean)
+            mean_errors.append(mean_err)
+            statistic = float(np.sum(w * (y - mean)**2))
+            xc = x - np.sum(w * x) / np.sum(w)
+            information = float(np.sum(w * xc**2))
+            slope = float(np.sum(w * xc * (y - mean)) / information) if information > 0 else float("nan")
+            slope_err = float(1 / np.sqrt(information)) if information > 0 else float("nan")
+            rows.append(result(str(group), "q2", len(y), mean, mean_err, statistic, len(y)-1, slope, slope_err))
+        if means:
+            y, w = np.array(means), 1 / np.array(mean_errors)**2
+            mean = float(np.sum(w * y) / np.sum(w))
+            rows.append(result("pooled", "helicity", len(y), mean, float(1 / np.sqrt(np.sum(w))),
+                               float(np.sum(w * (y - mean)**2)), len(y)-1))
+    return pd.DataFrame(rows)
+
+
+def summarize_flatness(flat: pd.DataFrame) -> Dict[str, Any]:
+    if flat.empty:
+        return dict(flat_min_p=float("nan"), flat_danger_count=0, helicity_p=float("nan"))
+    return dict(flat_min_p=float(flat.p_value.min()), flat_danger_count=int(flat.danger.sum()),
+                helicity_p=float(flat.loc[flat.kind.eq("helicity"), "p_value"].min()))
+
+
+def score_ld_comparison(df: pd.DataFrame) -> pd.DataFrame:
+    """Compare only available numerical LD postdictions; never replace SM.
+
+    These are descriptive pulls, not independent forward tests: the dispersive
+    postdictions were conditioned on related measurements.
+    """
+    columns = ["dataset", "observable", "q2_low", "q2_high", "value", "baseline_ld", "baseline_ld_err", "sigma", "z_to_ld", "notes"]
+    rows = []
+    for _, row in df[df.observable.isin(["S7", "S8", "S9"])].iterrows():
+        baseline = _to_float_or_nan(row.get("baseline_ld"))
+        error = _to_float_or_nan(row.get("baseline_ld_err"))
+        value = _to_float_or_nan(row.get("value"))
+        data_error = measurement_error(row)
+        if not all(math.isfinite(v) for v in (baseline, error, value, data_error)) or error < 0 or data_error <= 0:
+            continue
+        sigma = math.hypot(data_error, error)
+        entry = {key: row.get(key, "") for key in columns}
+        entry.update(baseline_ld=baseline, baseline_ld_err=error, sigma=sigma, z_to_ld=(value-baseline)/sigma)
+        rows.append(entry)
+    return pd.DataFrame(rows, columns=columns)
+
+
+def print_discriminators(nulls: pd.DataFrame, fits: pd.DataFrame, flat: pd.DataFrame) -> None:
+    print("\nDiscriminator warnings and dangers (all rows):")
+    found = False
+    for frame, identity, quantity in ((nulls, "null_id", "z_to_null"), (fits, "fit_id", "target_z"), (flat, "prediction_id", "p_value")):
+        if frame.empty or "warning" not in frame:
+            continue
+        for _, row in frame[frame.warning.fillna(False).astype(bool) | frame.danger.fillna(False).astype(bool)].iterrows():
+            found = True
+            label = "danger" if bool(row.danger) else "warning"
+            context = row.get("group", row.get("observable", row.get("parameter", "")))
+            bounds = f" [{row.q2_low:g}, {row.q2_high:g}]" if "q2_low" in row else ""
+            print(f"{label}: {row[identity]} {context}{bounds}: {quantity}={row[quantity]:.6g}")
+    if not found:
+        print("None.")
 
 
 def classify(summary: Dict[str, Any]) -> str:
@@ -362,11 +488,14 @@ def classify(summary: Dict[str, Any]) -> str:
     fit_sign_hits = summary.get("fit_sign_hits", 0) or 0
 
     fit_ok = True if fit_matches == 0 else fit_sign_hits == fit_matches
+    mechanism_danger = any(summary.get(key, 0) for key in ("abs_danger_count", "flat_danger_count", "fit_null_danger_count"))
     if math.isfinite(z) and z >= 2.0 and math.isfinite(hit_rate) and hit_rate >= 0.75 and cp_danger == 0 and fit_ok:
-        return "green"
+        return "amber" if mechanism_danger else "green"
     if (math.isfinite(z) and z < 0) or (math.isfinite(hit_rate) and hit_rate < 0.50) or cp_danger > 0 or not fit_ok:
         return "red"
     if (math.isfinite(z) and z >= 1.0) or (math.isfinite(hit_rate) and hit_rate >= 0.60):
+        return "amber"
+    if mechanism_danger:
         return "amber"
     return "inconclusive"
 
@@ -409,7 +538,8 @@ def print_summary(summary: Dict[str, Any]) -> None:
 def main(argv: Optional[List[str]] = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--measurements", required=True, help="CSV of measured observables and SM predictions")
-    parser.add_argument("--prediction-card", default="prediction_card.json", help="Frozen JSON prediction card")
+    parser.add_argument("--card", "--prediction-card", dest="prediction_card", default=str(Path(__file__).with_name("prediction_card.json")), help="Frozen JSON prediction card (default: v0.1)")
+    parser.add_argument("--c9-bins", default=None, help="Optional CSV of bin-by-bin C9 extractions")
     parser.add_argument("--fits", default=None, help="Optional CSV of EFT/global-fit parameter results, e.g. delta_Re_C9")
     parser.add_argument("--out-dir", default="deu_score_output", help="Directory for scored CSVs and summary JSON")
     args = parser.parse_args(argv)
@@ -436,13 +566,30 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     summary: Dict[str, Any] = {}
     summary.update(summarize_primary(primary))
-    summary.update(summarize_cp_nulls(cp_nulls))
+    if card.get("version") == "0.1":
+        summary.update(summarize_cp_nulls(cp_nulls))
+    else:
+        absorptive = cp_nulls["null_id"].eq("absorptive_parts_zero") if not cp_nulls.empty else pd.Series(dtype=bool)
+        summary.update(summarize_cp_nulls(cp_nulls.loc[~absorptive] if not cp_nulls.empty else cp_nulls))
+        abs_summary = summarize_cp_nulls(cp_nulls.loc[absorptive] if not cp_nulls.empty else cp_nulls)
+        summary.update({k.replace("n_cp_null_matches", "abs_n_matches").replace("max_abs_cp_z", "abs_max_abs_z").replace("cp_", "abs_"): v for k, v in abs_summary.items()})
+        c9_path = args.c9_bins or Path(args.prediction_card).with_name("lhcb_2025_c9_bins.csv")
+        flat = score_flatness(c9_path, card)
+        summary.update(summarize_flatness(flat))
+        ld = score_ld_comparison(measurements)
+        summary["ld_n_matches"] = len(ld)
+        summary["ld_status"] = "numeric postdictions available" if len(ld) else "unscored: figure-only postdictions; author numbers required"
     summary.update(summarize_fits(fit_scores))
     summary["classification"] = classify(summary)
     summary["prediction_card"] = card.get("name", "")
     summary["prediction_card_version"] = card.get("version", "")
 
     save_outputs(primary, cp_nulls, fit_scores, summary, args.out_dir)
+    if card.get("version") != "0.1":
+        flat.to_csv(Path(args.out_dir) / "flatness_scored.csv", index=False)
+        ld.to_csv(Path(args.out_dir) / "ld_baseline_scored.csv", index=False)
+        print_discriminators(cp_nulls, fit_scores, flat)
+        print(f"LD comparison: {summary['ld_status']}")
     print_summary(summary)
     return 0
 

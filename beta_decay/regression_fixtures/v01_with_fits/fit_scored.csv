@@ -1,0 +1,2 @@
+fit_id,dataset,parameter,value,err_total,expected_sign,sign_hit,target,target_z,soft_range_low,soft_range_high,in_soft_range,rationale
+delta_Re_C9_negative,lhcb_2025_reference,delta_Re_C9,-0.94,0.19,-1,True,-0.9,-0.21052631578947328,-1.4,-0.4,True,"In standard EFT language, the pattern should continue to look like a real negative Re(C9) shift."
